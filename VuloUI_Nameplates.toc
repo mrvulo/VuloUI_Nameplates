@@ -1,0 +1,9 @@
+## Interface: 120005
+## Title: |cff9370DBVulo|r|cffFFFFFFUI|r – Nameplates
+## Notes: Nameplates Modul für VuloUI
+## Version: 1.0.0
+## RequiredDeps: VuloUI
+## IconTexture: Interface\AddOns\atrocityMedia\Icons\vui4.tga
+## Category: |cff7381ffVuloUI|r
+
+Nameplates.lua
