@@ -98,15 +98,21 @@ local function DefaultProfile()
         fontOutline        = "OUTLINE",  -- NONE, OUTLINE, THICKOUTLINE
         fontShadow         = true,
 
-        -- Farben
+        -- Farben (Reaktion)
         classColorPlayers  = true,
         useReactionColors  = true,
         colorFriendly      = {0.20, 0.80, 0.20},
         colorNeutral       = {0.90, 0.85, 0.20},
         colorEnemy         = {0.90, 0.20, 0.20},
         colorTapped        = {0.50, 0.50, 0.50},
+        colorCaster        = {0.23, 0.51, 0.96},
+        colorMiniBoss      = {0.52, 0.24, 0.98},
         colorBackground    = {0.04, 0.04, 0.04, 1.00},
         colorBorder        = {0.08, 0.08, 0.08, 1.00},
+
+        -- Quest-Mob Farbe
+        questMobColorEnabled = false,
+        questMobColor      = {0.16, 0.86, 0.48},
 
         -- Texte
         showName           = true,
@@ -115,6 +121,8 @@ local function DefaultProfile()
         showHealthPercent  = true,
         showHealthAbsolute = false,
         abbreviateNumbers  = true,
+        nameYOffset        = 0,
+        nameTextSize       = 11,
 
         -- Threat
         showThreat         = true,
@@ -126,29 +134,64 @@ local function DefaultProfile()
         colorThreatHigh    = {1.00, 0.10, 0.10},
         colorThreatTank    = {0.10, 0.90, 0.10},
         colorThreatOffTank = {0.10, 0.50, 1.00},
+        offTankAggroEnabled = true,
+        tankHasAggroEnabled = false,
 
         -- Castbar
         showCastbar        = true,
         showCastIcon       = true,
         showCastSpark      = true,
+        castIconScale      = 1.0,
+        castNameSize       = 10,
+        castNameColor      = {1, 1, 1},
+        castNameOffsetX    = 0,
+        castNameOffsetY    = 0,
+        castTargetSize     = 10,
+        castTargetClassColor = true,
+        castTargetColor    = {1, 1, 1},
+        showCastTimer      = true,
+        castTimerSize      = 10,
+        castTimerColor     = {1, 1, 1},
+        castTimerOffsetX   = 0,
+        castTimerOffsetY   = 0,
         colorCastNormal    = {0.90, 0.70, 0.10},
         colorCastChannel   = {0.30, 0.60, 1.00},
         colorCastUninter   = {0.50, 0.50, 0.50},
         colorCastInterrupt = {1.00, 0.20, 0.20},
+        interruptReadyColor = {0.92, 0.35, 0.20},
 
-        -- Auras
+        -- Cast-Glow (wichtige Casts hervorheben)
+        importantCastGlow      = false,
+        importantCastGlowColor = {1, 0.2, 0.2},
+
+        -- Pandemic-Glow (wenn Aura kurz vor Ablauf)
+        pandemicGlow       = false,
+        pandemicGlowColor  = {1.0, 0.80, 0.33},
+
+        -- Dispel-Glow (dispellable auras)
+        dispelGlow         = false,
+        dispelGlowColor    = {1.0, 1.0, 1.0},
+        dispelGlowUseTypeColor = false,
+
+        -- Auras (allgemein)
         showAuras          = true,
         auraCount          = 6,
         auraIconSize       = 14,
         auraSpacing        = 2,
         auraFilter         = "all",  -- mine, important, all
-        auraWhitelist      = {},  -- [spellID] = true
-        auraBlacklist      = {},  -- [spellID] = true
-        auraImportant      = {},  -- [spellID] = true (immer zeigen)
+        auraWhitelist      = {},
+        auraBlacklist      = {},
+        auraImportant      = {},
+
+        -- Aura-Text Größen + Farben
+        auraDurationTextSize  = 11,
+        auraDurationTextColor = {1, 1, 1},
+        auraStackTextSize     = 11,
+        auraStackTextColor    = {1, 1, 1},
+        showAuraDuration      = true,
+        showAuraStacks        = true,
 
         -- Aura-Slot-Positionen (6 Positionen rund ums Nameplate)
-        -- Jeder Slot hat enabled (sichtbar) und kind (Aura-Typ).
-        -- kinds: "debuffs", "buffs", "ccs", "raidmarker", "elite", "none"
         auraSlots = {
             top      = { enabled = true,  kind = "debuffs"    },
             left     = { enabled = true,  kind = "buffs"      },
@@ -158,35 +201,79 @@ local function DefaultProfile()
             bottom   = { enabled = true,  kind = "none"       },
         },
 
+        -- Pro Slot: Größe + X/Y Offset
+        topSlotSize        = 26, topSlotXOffset    = 0, topSlotYOffset    = 0,
+        rightSlotSize      = 24, rightSlotXOffset  = 2, rightSlotYOffset  = 0,
+        leftSlotSize       = 24, leftSlotXOffset   = 2, leftSlotYOffset   = 0,
+        toprightSlotSize   = 24, toprightSlotXOffset = 0, toprightSlotYOffset = 0,
+        topleftSlotSize    = 24, topleftSlotXOffset  = 0, topleftSlotYOffset  = 0,
+        bottomSlotSize     = 26, bottomSlotXOffset = 0, bottomSlotYOffset = 0,
+
         -- Target
         targetHighlight    = true,
         targetGlowColor    = {1, 1, 1, 1},
-        targetScale        = 1.15,
+        targetGlowStyle    = "vului",  -- vului, blizzard
+        targetScale        = 115,        -- in % (für Slider)
         nonTargetAlpha     = 0.85,
+        showTargetArrows   = false,
+        targetArrowScale   = 1.0,
+
+        -- Focus
+        focusColorEnabled  = true,
+        focusColor         = {0.05, 0.82, 0.62},
+        focusOverlayAlpha  = 0.40,
 
         -- Execute Range
         showExecute        = true,
-        executeThreshold   = 35,  -- in % HP
+        executeThreshold   = 35,
         executeColor       = {1.00, 0.30, 0.30},
+
+        -- Hash Line (Markierungs-Linie bei % HP)
+        hashLineEnabled    = false,
+        hashLinePercent    = 30,
+        hashLineColor      = {1, 1, 1},
+
+        -- Class Power Bar (Combo Points etc.)
+        showClassPower     = false,
+        classPowerPos      = "bottom",  -- bottom, top
+        classPowerYOffset  = 1,
+        classPowerXOffset  = 0,
+        classPowerScale    = 1.0,
+        classPowerClassColors = true,
+        classPowerCustomColor = {1.00, 0.84, 0.30},
+        classPowerBgColor  = {0.08, 0.08, 0.08, 1.0},
+        classPowerEmptyColor = {0.2, 0.2, 0.2, 1.0},
+        classPowerGap      = 2,
+
+        -- Friendly NPCs / Players
+        showFriendlyNPCs   = false,
+        showFriendlyPlayers = true,
+        friendlyNameOnly   = true,
+        friendlyHealthBarHeight = 14,
+        friendlyHealthBarWidth  = 150,
+        classColorFriendly = true,
+        friendlyBarColor   = {0.31, 0.80, 0.41},
+
+        -- Stacking (überlappende Plates verhindern)
+        stackingEnabled    = true,
+        nameplateOverlapV  = 1.10,
+        stackSpacingScale  = 100,
+
+        -- Hitbox (klickbare Fläche)
+        hitboxScaleX       = 100,
+        hitboxScaleY       = 100,
+
+        -- Border
+        showBorder         = true,
+        borderSize         = 1,
+
+        -- Background
+        bgAlpha            = 1.0,
+        castBgAlpha        = 0.9,
+        castBgColor        = {0.10, 0.10, 0.10},
 
         -- Mods (NPC-spezifische Anpassungen)
         mods               = {},
-        -- Format pro Mod:
-        -- {
-        --   id = "uniqueid",
-        --   name = "Anzeigename",
-        --   enabled = true,
-        --   trigger = { type = "npcid", value = 12345 },
-        --     -- types: npcid, npcname, spellcast, aurapresent
-        --   actions = {
-        --     { type = "setcolor", color = {1,0,0} },
-        --     { type = "setborder", color = {1,1,0,1}, size = 2 },
-        --     { type = "setscale", value = 1.3 },
-        --     { type = "glow", color = {1,1,0,1} },
-        --     { type = "hide" },
-        --     { type = "important", text = "FOCUS!", color = {1,0,0} },
-        --   }
-        -- }
     }
 end
 
@@ -291,15 +378,42 @@ local function GetUnitNpcID(unit)
     return tonumber(npcID)
 end
 
+-- Helper: liest entweder den Color-Picker-Wert (profile.colors[key])
+-- oder den Default-Profile-Wert (z.B. profile.colorEnemy).
+-- ColorPickers speichern als {r,g,b,a}-Tabelle, Profile als {1,2,3,a}-Array.
+local function ReadColor(profile, pickerKey, fallbackKey)
+    -- Priorität: ColorPicker-Wert (aus ConfigUI) > Profile-Default
+    if profile.colors and profile.colors[pickerKey] then
+        local c = profile.colors[pickerKey]
+        if c.r then
+            return c.r, c.g, c.b, c.a or 1
+        elseif c[1] then
+            return c[1], c[2], c[3], c[4] or 1
+        end
+    end
+    -- Fallback: Profile-Default (Tabelle mit indices)
+    local fb = profile[fallbackKey]
+    if fb then
+        return fb[1], fb[2], fb[3], fb[4] or 1
+    end
+    return 1, 1, 1, 1
+end
+
 local function GetReactionColor(unit, profile)
     if UnitIsTapDenied(unit) then
-        return unpack(profile.colorTapped)
+        return ReadColor(profile, "tapped", "colorTapped")
     end
+
+    -- Quest-Mob-Color (höhere Priorität als Reaktion)
+    if profile.questMobColorEnabled and IsUnitQuestMob and IsUnitQuestMob(unit) then
+        return ReadColor(profile, "questMob", "questMobColor")
+    end
+
     local r = UnitReaction(unit, "player")
-    if not r then return unpack(profile.colorEnemy) end
-    if r >= 5 then return unpack(profile.colorFriendly)
-    elseif r == 4 then return unpack(profile.colorNeutral)
-    else return unpack(profile.colorEnemy) end
+    if not r then return ReadColor(profile, "hostileHP", "colorEnemy") end
+    if r >= 5 then return ReadColor(profile, "friendlyHP", "colorFriendly")
+    elseif r == 4 then return ReadColor(profile, "neutralHP", "colorNeutral")
+    else return ReadColor(profile, "hostileHP", "colorEnemy") end
 end
 
 local function GetHealthColor(unit, profile)
@@ -311,7 +425,18 @@ local function GetHealthColor(unit, profile)
     if profile.useReactionColors then
         return GetReactionColor(unit, profile)
     end
-    return unpack(profile.colorEnemy)
+    return ReadColor(profile, "hostileHP", "colorEnemy")
+end
+
+-- Helper: prüft ob ein Unit ein Quest-Mob ist (Quest-Marker)
+function IsUnitQuestMob(unit)
+    local ok, isQuest = pcall(function()
+        if C_QuestLog and C_QuestLog.UnitIsRelatedToActiveQuest then
+            return C_QuestLog.UnitIsRelatedToActiveQuest(unit)
+        end
+        return false
+    end)
+    return ok and isQuest
 end
 
 -- ============================================================
@@ -588,6 +713,17 @@ local function BuildNameplate(baseFrame, unit)
     castText:SetPoint("LEFT", castBar, "LEFT", P(3), 0)
     castText:SetTextColor(1, 0.95, 0.8)
 
+    -- Cast-Timer (rechts in der Castbar)
+    local castTimer = MakeFS(castBar, profile.fontSize - 2)
+    castTimer:SetPoint("RIGHT", castBar, "RIGHT", -P(3), 0)
+    castTimer:SetTextColor(1, 1, 1)
+
+    -- Cast-Target (über der Castbar; zeigt wen der Mob castet)
+    local castTarget = MakeFS(castContainer, profile.fontSize - 2)
+    castTarget:SetPoint("BOTTOM", castContainer, "TOP", 0, P(2))
+    castTarget:SetTextColor(1, 1, 1)
+    castTarget:Hide()
+
     local castIcon = castContainer:CreateTexture(nil, "ARTWORK")
     castIcon:SetSize(cbh, cbh)
     castIcon:SetPoint("RIGHT", castContainer, "LEFT", -P(2), 0)
@@ -603,6 +739,42 @@ local function BuildNameplate(baseFrame, unit)
     castSpark:SetColorTexture(1, 1, 1, 0.9)
     castSpark:SetPoint("CENTER", castBar:GetStatusBarTexture(), "RIGHT", 0, 0)
 
+    -- OnUpdate für den Cast-Timer-Text. Liest die verbleibende Zeit aus
+    -- der TimerDuration-API (secret-safe) und schreibt sie in castTimer.
+    castBar:SetScript("OnUpdate", function(self, elapsed)
+        self._timerElapsed = (self._timerElapsed or 0) + elapsed
+        if self._timerElapsed < 0.05 then return end
+        self._timerElapsed = 0
+
+        if not f.casting then return end
+        if not f.castTimer or not f.castTimer:IsShown() then return end
+
+        local remaining
+        if self.GetTimerDuration then
+            local ok, durObj = pcall(self.GetTimerDuration, self)
+            if ok and durObj and durObj.GetRemainingDuration then
+                local r = durObj:GetRemainingDuration()
+                if r and not issecretvalue(r) then
+                    remaining = r
+                end
+            end
+        end
+
+        if remaining and remaining > 0 then
+            f.castTimer:SetText(string.format("%.1f", remaining))
+        else
+            f.castTimer:SetText("")
+        end
+    end)
+
+    -- Cast-Glow für wichtige Casts (Texture-Layer über CastBar)
+    local castGlow = castContainer:CreateTexture(nil, "OVERLAY", nil, 7)
+    castGlow:SetPoint("TOPLEFT",     castContainer, "TOPLEFT",     -P(3), P(3))
+    castGlow:SetPoint("BOTTOMRIGHT", castContainer, "BOTTOMRIGHT",  P(3), -P(3))
+    castGlow:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+    castGlow:SetBlendMode("ADD")
+    castGlow:Hide()
+
     castContainer:Hide()
 
     -- ── AURA-SLOTS (6 Positionen mit je einem Icon) ──────────
@@ -615,10 +787,14 @@ local function BuildNameplate(baseFrame, unit)
     --   elite      -> Elite/Rare-Indikator
     --   none       -> nichts (Slot bleibt leer)
 
-    local SLOT_SIZE = P(profile.auraIconSize + 4)  -- etwas größer als alte Aura-Icons
+    -- Default-Slot-Größe (wird in ApplySlotSize live überschrieben)
+    local SLOT_SIZE = P(profile.auraIconSize + 4)
+    local MAX_ICONS_PER_SLOT = 2
+    local ICON_SPACING = 2
 
-    local function CreateSlotIcon()
-        local icon = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    -- Erstellt EIN einzelnes Aura-Icon (Sub-Frame eines Slot-Containers)
+    local function CreateAuraIcon(parent)
+        local icon = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         icon:SetSize(SLOT_SIZE, SLOT_SIZE)
         icon:SetBackdrop({
             bgFile   = "Interface\\ChatFrame\\ChatFrameBackground",
@@ -642,26 +818,164 @@ local function BuildNameplate(baseFrame, unit)
         icon.count:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", P(1), P(1))
         icon.count:SetTextColor(1, 1, 1)
 
+        icon.duration = MakeFS(icon, profile.fontSize - 2)
+        icon.duration:SetPoint("TOP", icon, "TOP", 0, P(8))
+        icon.duration:SetTextColor(1, 1, 1)
+        icon.duration:Hide()
+
+        icon.glow = icon:CreateTexture(nil, "OVERLAY", nil, 7)
+        icon.glow:SetPoint("TOPLEFT",     icon, "TOPLEFT",     -P(2), P(2))
+        icon.glow:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT",  P(2), -P(2))
+        icon.glow:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+        icon.glow:SetBlendMode("ADD")
+        icon.glow:Hide()
+
         icon:Hide()
         return icon
     end
 
-    -- Slot-Anker: Position relativ zum Nameplate
-    -- Top/Bottom mittig oberhalb/unterhalb, Left/Right an Bar-Seiten
-    local function AnchorSlot(slot, slotID)
+    -- Erstellt einen Slot-Container der bis zu MAX_ICONS_PER_SLOT Icons hält.
+    -- Die Icons sind horizontal nebeneinander angeordnet.
+    local function CreateSlotIcon()
+        local slot = CreateFrame("Frame", nil, f)
+        slot.icons = {}
+        for i = 1, MAX_ICONS_PER_SLOT do
+            slot.icons[i] = CreateAuraIcon(slot)
+        end
+        slot:Hide()
+        return slot
+    end
+
+    -- Slot-Anker: Position relativ zum Nameplate.
+    -- Liest jetzt auch die per-Slot-Offsets aus dem Profile, plus
+    -- per-Slot Alignment ("left" / "center" / "right" für top/bottom,
+    -- "top" / "center" / "bottom" für left/right).
+    local function AnchorSlot(slot, slotID, p)
+        p = p or NP:GetActiveProfile()
         slot:ClearAllPoints()
+
+        local xOff = SafeNum(p[slotID.."SlotXOffset"]) or 0
+        local yOff = SafeNum(p[slotID.."SlotYOffset"]) or 0
+
+        -- Default-Alignment je nach Slot:
+        --   top       → "right" (rechtsbündig wie im Bild)
+        --   bottom    → "center"
+        --   left/right → "center"
+        --   topleft   → "left" (an HP-Bar Linke Seite)
+        --   topright  → "right"
+        local defaultAlign = "center"
+        if slotID == "top"      then defaultAlign = "right" end
+        if slotID == "topleft"  then defaultAlign = "left"  end
+        if slotID == "topright" then defaultAlign = "right" end
+        local align = p[slotID.."SlotAlign"] or defaultAlign
+
         if     slotID == "top" then
-            slot:SetPoint("BOTTOM", hpContainer, "TOP", 0, P(2))
+            -- Top kann links/zentriert/rechts an HP-Bar ankern
+            if align == "left" then
+                slot:SetPoint("BOTTOMLEFT", hpContainer, "TOPLEFT",
+                    P(xOff), P(2 + yOff))
+            elseif align == "right" then
+                slot:SetPoint("BOTTOMRIGHT", hpContainer, "TOPRIGHT",
+                    P(xOff), P(2 + yOff))
+            else
+                slot:SetPoint("BOTTOM", hpContainer, "TOP",
+                    P(xOff), P(2 + yOff))
+            end
+
         elseif slotID == "bottom" then
-            slot:SetPoint("TOP", castContainer, "BOTTOM", 0, -P(2))
+            if align == "left" then
+                slot:SetPoint("TOPLEFT", castContainer, "BOTTOMLEFT",
+                    P(xOff), P(-2 + yOff))
+            elseif align == "right" then
+                slot:SetPoint("TOPRIGHT", castContainer, "BOTTOMRIGHT",
+                    P(xOff), P(-2 + yOff))
+            else
+                slot:SetPoint("TOP", castContainer, "BOTTOM",
+                    P(xOff), P(-2 + yOff))
+            end
+
         elseif slotID == "left" then
-            slot:SetPoint("RIGHT", hpContainer, "LEFT", -P(2), 0)
+            -- Left kann oben/zentriert/unten ankern
+            if align == "top" then
+                slot:SetPoint("TOPRIGHT", hpContainer, "TOPLEFT",
+                    P(-2 + xOff), P(yOff))
+            elseif align == "bottom" then
+                slot:SetPoint("BOTTOMRIGHT", hpContainer, "BOTTOMLEFT",
+                    P(-2 + xOff), P(yOff))
+            else
+                slot:SetPoint("RIGHT", hpContainer, "LEFT",
+                    P(-2 + xOff), P(yOff))
+            end
+
         elseif slotID == "right" then
-            slot:SetPoint("LEFT", hpContainer, "RIGHT", P(2), 0)
+            if align == "top" then
+                slot:SetPoint("TOPLEFT", hpContainer, "TOPRIGHT",
+                    P(2 + xOff), P(yOff))
+            elseif align == "bottom" then
+                slot:SetPoint("BOTTOMLEFT", hpContainer, "BOTTOMRIGHT",
+                    P(2 + xOff), P(yOff))
+            else
+                slot:SetPoint("LEFT", hpContainer, "RIGHT",
+                    P(2 + xOff), P(yOff))
+            end
+
         elseif slotID == "topleft" then
-            slot:SetPoint("BOTTOMRIGHT", hpContainer, "TOPLEFT", -P(2), P(2))
+            -- Über HP-Bar links-bündig (wachsen nach rechts ist default)
+            slot:SetPoint("BOTTOMLEFT", hpContainer, "TOPLEFT",
+                P(xOff), P(2 + yOff))
+
         elseif slotID == "topright" then
-            slot:SetPoint("BOTTOMLEFT", hpContainer, "TOPRIGHT", P(2), P(2))
+            -- Über HP-Bar rechts-bündig (wachsen nach links ist default)
+            slot:SetPoint("BOTTOMRIGHT", hpContainer, "TOPRIGHT",
+                P(xOff), P(2 + yOff))
+        end
+    end
+
+    -- Slot-Größe aus dem Profile lesen + setzen.
+    -- Berechnet Container-Breite (Icons * Größe + Spacing) und positioniert
+    -- die Sub-Icons horizontal nebeneinander. Wachstumsrichtung je nach
+    -- Slot-Position so dass sie nicht in das Plate hineinwachsen.
+    local function ApplySlotSize(slot, slotID, p)
+        p = p or NP:GetActiveProfile()
+        local sz = SafeNum(p[slotID.."SlotSize"]) or (p.auraIconSize + 4)
+        if sz < 12 then sz = 12 end
+        if sz > 64 then sz = 64 end
+
+        local iconSize = P(sz)
+        local spacing  = P(ICON_SPACING)
+        local count    = MAX_ICONS_PER_SLOT
+
+        -- Container-Größe (genug Platz für alle Icons)
+        local totalW = count * iconSize + (count - 1) * spacing
+        slot:SetSize(totalW, iconSize)
+
+        -- Wachstumsrichtung: hängt vom Slot-Alignment ab.
+        --   align=right (top): erstes Icon rechts, wächst nach links
+        --   align=left  (top): erstes Icon links, wächst nach rechts
+        --   align=center: zentriert, erstes Icon Mitte (default rechts wachsend)
+        local defaultAlign = "center"
+        if slotID == "top"      then defaultAlign = "right" end
+        if slotID == "topleft"  then defaultAlign = "left"  end
+        if slotID == "topright" then defaultAlign = "right" end
+        local align = p[slotID.."SlotAlign"] or defaultAlign
+
+        local growLeft = false
+        -- Wenn Slot rechts-bündig: Icons wachsen nach links
+        if align == "right" then growLeft = true end
+        -- Top/Left default zum links wachsen für gute Optik
+        if align == "center" and (slotID == "top" or slotID == "left") then
+            growLeft = true
+        end
+
+        for i, ic in ipairs(slot.icons) do
+            ic:SetSize(iconSize, iconSize)
+            ic:ClearAllPoints()
+            local offset = (i - 1) * (iconSize + spacing)
+            if growLeft then
+                ic:SetPoint("RIGHT", slot, "RIGHT", -offset, 0)
+            else
+                ic:SetPoint("LEFT", slot, "LEFT", offset, 0)
+            end
         end
     end
 
@@ -669,8 +983,19 @@ local function BuildNameplate(baseFrame, unit)
     f.auraSlotFrames = {}
     for _, slotID in ipairs({"top","left","topleft","right","topright","bottom"}) do
         local slot = CreateSlotIcon()
-        AnchorSlot(slot, slotID)
+        ApplySlotSize(slot, slotID, profile)
+        AnchorSlot(slot, slotID, profile)
         f.auraSlotFrames[slotID] = slot
+    end
+
+    -- Public API: Slots refreshen wenn Settings sich ändern
+    f.RefreshSlotLayout = function(self)
+        local p = NP:GetActiveProfile()
+        if not self.auraSlotFrames then return end
+        for slotID, slot in pairs(self.auraSlotFrames) do
+            ApplySlotSize(slot, slotID, p)
+            AnchorSlot(slot, slotID, p)
+        end
     end
 
     -- ── REFERENZEN ───────────────────────────────────────────
@@ -689,8 +1014,11 @@ local function BuildNameplate(baseFrame, unit)
     f.targetGlow    = targetGlow
     f.castBar       = castBar
     f.castText      = castText
+    f.castTimer     = castTimer
+    f.castTarget    = castTarget
     f.castIcon      = castIcon
     f.castSpark     = castSpark
+    f.castGlow      = castGlow
     f.castContainer = castContainer
     f.interruptBar  = interruptBar
     f.casting       = false
@@ -941,75 +1269,191 @@ local function BuildNameplate(baseFrame, unit)
     -- der bekannten CC-Spells ist. Erweiterbar via profile.
 
     -- Apply aura data to a slot icon
-    local function FillSlotWithAura(slot, d)
-        slot.tex:SetTexture(d.icon)
-        slot.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    -- Befüllt EIN einzelnes Icon-Sub-Frame mit Aura-Daten.
+    -- (vorher hieß die Funktion FillSlotWithAura, jetzt arbeitet sie auf
+    -- einer Icon-Sub-Frame statt auf dem ganzen Slot.)
+    local function FillIconWithAura(icon, d, p)
+        p = p or NP:GetActiveProfile()
+        icon.tex:SetTexture(d.icon)
+        icon.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-        -- Border-Farbe nach Dispel-Type. dispelName kann ein secret value
-        -- sein in WoW 12.0 - mit issecretvalue() guarden bevor als Key
-        -- benutzen.
+        -- Border-Farbe nach Dispel-Type
         local dispel = d.dispelName
+        local hasDispel = dispel and not issecretvalue(dispel)
         local c
-        if dispel and not issecretvalue(dispel) then
+        if hasDispel then
             c = DEBUFF_TYPE_COLORS[dispel] or DEBUFF_TYPE_COLORS.none
         else
             c = DEBUFF_TYPE_COLORS.none
         end
-        slot:SetBackdropBorderColor(c[1], c[2], c[3], 1)
+        icon:SetBackdropBorderColor(c[1], c[2], c[3], 1)
 
-        -- Stack-Count. stackStr von GetAuraApplicationDisplayCount kann ein
-        -- secret string sein - wir können ihn mit SetText durchreichen, aber
-        -- NICHT mit == oder ~= vergleichen. Wir nutzen daher applications
-        -- als Sichtbarkeits-Steuerung (numerisch, nicht-secret durch SafeNum).
+        -- Stack-Count
         local apps = SafeNum(d.applications)
-        local showCount = apps and apps > 1
-        if showCount and C_UnitAuras.GetAuraApplicationDisplayCount and d.auraInstanceID then
-            local stackStr = C_UnitAuras.GetAuraApplicationDisplayCount(
-                unit, d.auraInstanceID, 2, 999)
-            if stackStr then
-                -- secret-safe: SetText akzeptiert secret strings
-                slot.count:SetText(stackStr)
-                slot.count:Show()
+        local showCount = (p.showAuraStacks ~= false) and apps and apps > 1
+        if showCount then
+            local stackSize = SafeNum(p.auraStackTextSize) or 11
+            local stackColor = p.auraStackTextColor or {1, 1, 1}
+            icon.count:SetFont(GetFont(p), P(stackSize), "OUTLINE")
+            icon.count:SetTextColor(stackColor[1], stackColor[2], stackColor[3], 1)
+
+            if C_UnitAuras.GetAuraApplicationDisplayCount and d.auraInstanceID then
+                local stackStr = C_UnitAuras.GetAuraApplicationDisplayCount(
+                    unit, d.auraInstanceID, 2, 999)
+                if stackStr then
+                    icon.count:SetText(stackStr)
+                    icon.count:Show()
+                else
+                    icon.count:Hide()
+                end
             else
-                slot.count:Hide()
+                icon.count:SetText(apps)
+                icon.count:Show()
             end
-        elseif showCount then
-            slot.count:SetText(apps)
-            slot.count:Show()
         else
-            slot.count:Hide()
+            icon.count:Hide()
         end
 
-        -- Cooldown via DurationObject (secret-safe)
+        -- Duration-Text (für mehrere Icons NICHT zentral - aus dem
+        -- Cooldown-Frame liest WoW intern, wir setzen nur Style)
+        if p.showAuraDuration ~= false and icon.duration then
+            local durSize  = SafeNum(p.auraDurationTextSize) or 11
+            local durColor = p.auraDurationTextColor or {1, 1, 1}
+            icon.duration:SetFont(GetFont(p), P(durSize), "OUTLINE")
+            icon.duration:SetTextColor(durColor[1], durColor[2], durColor[3], 1)
+        end
+
+        -- Cooldown
         if C_UnitAuras.GetAuraDuration and d.auraInstanceID
-           and slot.cd.SetCooldownFromDurationObject then
+           and icon.cd.SetCooldownFromDurationObject then
             local durObj = C_UnitAuras.GetAuraDuration(unit, d.auraInstanceID)
             if durObj then
-                slot.cd:SetCooldownFromDurationObject(durObj)
-                slot.cd:Show()
+                icon.cd:SetCooldownFromDurationObject(durObj)
+                icon.cd:Show()
             else
-                slot.cd:Hide()
+                icon.cd:Hide()
             end
         else
             local dur = SafeNum(d.duration)
             local exp = SafeNum(d.expirationTime)
             if dur and exp and dur > 0 then
-                slot.cd:SetCooldown(exp - dur, dur)
-                slot.cd:Show()
+                icon.cd:SetCooldown(exp - dur, dur)
+                icon.cd:Show()
             else
-                slot.cd:Hide()
+                icon.cd:Hide()
             end
         end
 
+        -- Pandemic-Glow
+        local pandemicActive = false
+        if p.pandemicGlow then
+            local dur = SafeNum(d.duration)
+            local exp = SafeNum(d.expirationTime)
+            if dur and exp and dur > 0 then
+                local now = GetTime()
+                local remaining = exp - now
+                if remaining > 0 and remaining < dur * 0.3 then
+                    pandemicActive = true
+                end
+            end
+        end
+
+        -- Dispel-Glow
+        local dispelActive = false
+        if p.dispelGlow and hasDispel then
+            dispelActive = true
+        end
+
+        if icon.glow then
+            if pandemicActive then
+                local glowColor = (p.colors and p.colors.pandemicGlow)
+                              or {1.0, 0.80, 0.33, 1}
+                icon.glow:SetVertexColor(glowColor[1], glowColor[2],
+                                         glowColor[3], glowColor[4] or 1)
+                icon.glow:Show()
+            elseif dispelActive then
+                local glowColor
+                if p.dispelGlowUseTypeColor and hasDispel then
+                    local dc = DEBUFF_TYPE_COLORS[dispel] or DEBUFF_TYPE_COLORS.none
+                    glowColor = {dc[1], dc[2], dc[3], 1}
+                else
+                    glowColor = (p.colors and p.colors.dispelGlow)
+                            or {1, 1, 1, 1}
+                end
+                icon.glow:SetVertexColor(glowColor[1], glowColor[2],
+                                         glowColor[3], glowColor[4] or 1)
+                icon.glow:Show()
+            else
+                icon.glow:Hide()
+            end
+        end
+
+        icon:Show()
+    end
+
+    -- Befüllt einen Slot mit einer Liste von Auras (max MAX_ICONS_PER_SLOT).
+    -- Überzählige Icon-Sub-Frames werden versteckt.
+    local function FillSlotWithAuraList(slot, auraList, p)
+        local count = math.min(#auraList, MAX_ICONS_PER_SLOT)
+        for i, icon in ipairs(slot.icons) do
+            if i <= count then
+                FillIconWithAura(icon, auraList[i], p)
+            else
+                icon:Hide()
+            end
+        end
+        if count > 0 then
+            slot:Show()
+        else
+            slot:Hide()
+        end
+    end
+
+    -- Befüllt einen Slot mit nur einer einzelnen Aura (legacy für single-
+    -- icon kinds wie raidmarker/elite).
+    local function FillSlotSingle(slot, d, p)
+        FillIconWithAura(slot.icons[1], d, p)
+        for i = 2, #slot.icons do
+            slot.icons[i]:Hide()
+        end
+        slot:Show()
+    end
+
+    -- Befüllt einen Slot mit einer einzelnen Texture (Raidmarker/Elite-Icon).
+    -- Setzt nur das erste Icon-Sub-Frame mit der gegebenen Texture.
+    local function FillSlotTexture(slot, texture, borderColor)
+        local icon = slot.icons[1]
+        icon.tex:SetTexture(texture)
+        icon.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        if borderColor then
+            icon:SetBackdropBorderColor(borderColor[1], borderColor[2],
+                                        borderColor[3], 1)
+        else
+            icon:SetBackdropBorderColor(0, 0, 0, 0)
+        end
+        icon.count:Hide()
+        icon.cd:Hide()
+        if icon.glow then icon.glow:Hide() end
+        icon:Show()
+        for i = 2, #slot.icons do
+            slot.icons[i]:Hide()
+        end
         slot:Show()
     end
 
     -- Finde die wichtigste Aura eines Filter-Typs ("HARMFUL"/"HELPFUL")
     -- Priorität: 1) eigene mit Dauer, 2) Whitelist, 3) erste mit Dauer
-    local function FindBestAura(filter, p)
+    -- Findet bis zu maxCount Auras eines Filter-Typs, sortiert nach Priorität:
+    --   1. Eigene Auras (player als source)
+    --   2. Important/Whitelist Auras
+    --   3. Andere Auras
+    -- Returniert eine Liste, beschränkt auf maxCount Einträge.
+    local function FindBestAuras(filter, p, maxCount)
+        maxCount = maxCount or MAX_ICONS_PER_SLOT
         local imp = p.auraImportant or {}
         local wl  = p.auraWhitelist or {}
-        local bestMine, bestImportant, bestAny
+        local mine, important, others = {}, {}, {}
+
         for idx = 1, 40 do
             local d = C_UnitAuras.GetAuraDataByIndex(unit, idx, filter)
             if not d then break end
@@ -1020,18 +1464,46 @@ local function BuildNameplate(baseFrame, unit)
                 local srcSafe = (src and not issecretvalue(src))
                 local isMine = srcSafe and UnitIsUnit(src, "player")
 
-                if isMine and not bestMine then
-                    bestMine = d
-                end
-                if idSafe and (imp[id] or wl[id]) and not bestImportant then
-                    bestImportant = d
-                end
-                if not bestAny then
-                    bestAny = d
+                if isMine then
+                    table.insert(mine, d)
+                elseif idSafe and (imp[id] or wl[id]) then
+                    table.insert(important, d)
+                else
+                    table.insert(others, d)
                 end
             end
         end
-        return bestMine or bestImportant or bestAny
+
+        -- Sortiere eigene Auras nach verbleibender Zeit (längste zuerst).
+        -- Dadurch sind frische DoTs zuerst, kurz vor Ablauf zuletzt.
+        local now = GetTime()
+        local function sortByRemaining(a, b)
+            local ea = SafeNum(a.expirationTime) or 0
+            local eb = SafeNum(b.expirationTime) or 0
+            -- 0 (no duration) ans Ende
+            if ea == 0 and eb == 0 then return false end
+            if ea == 0 then return false end
+            if eb == 0 then return true end
+            return (ea - now) > (eb - now)
+        end
+        pcall(table.sort, mine, sortByRemaining)
+        pcall(table.sort, important, sortByRemaining)
+
+        -- Resultat zusammenbauen: erst mine, dann important, dann others
+        local result = {}
+        for _, d in ipairs(mine) do
+            if #result >= maxCount then break end
+            table.insert(result, d)
+        end
+        for _, d in ipairs(important) do
+            if #result >= maxCount then break end
+            table.insert(result, d)
+        end
+        for _, d in ipairs(others) do
+            if #result >= maxCount then break end
+            table.insert(result, d)
+        end
+        return result
     end
 
     -- Update einer einzelnen Slot-Position basierend auf kind
@@ -1046,45 +1518,192 @@ local function BuildNameplate(baseFrame, unit)
         if kind == "none" then
             slot:Hide()
             return
-        end
 
-        if kind == "debuffs" then
-            local d = FindBestAura("HARMFUL", p)
-            if d then
-                FillSlotWithAura(slot, d)
+        elseif kind == "debuffs" then
+            -- Bis zu MAX_ICONS_PER_SLOT Debuffs (eigene priorisiert)
+            local list = FindBestAuras("HARMFUL", p, MAX_ICONS_PER_SLOT)
+            if #list > 0 then
+                FillSlotWithAuraList(slot, list, p)
             else
                 slot:Hide()
             end
 
         elseif kind == "buffs" then
-            local d = FindBestAura("HELPFUL", p)
-            if d then
-                FillSlotWithAura(slot, d)
+            local list = FindBestAuras("HELPFUL", p, MAX_ICONS_PER_SLOT)
+            if #list > 0 then
+                FillSlotWithAuraList(slot, list, p)
             else
                 slot:Hide()
             end
 
         elseif kind == "ccs" then
-            -- Heuristik: zeige aktive CC wenn vorhanden (Magic/Stun/etc.)
-            -- Wir suchen harmful auras mit einem dispelName das "Magic" ist
-            -- und kurze Duration (typisch für CC). Erweiterbar.
-            local found
-            for idx = 1, 40 do
-                local d = C_UnitAuras.GetAuraDataByIndex(unit, idx, "HARMFUL")
-                if not d then break end
-                if canaccesstable(d) then
-                    -- Einfacher CC-Filter: hat dispelName und kurze Duration
-                    local dur = SafeNum(d.duration)
-                    local dispel = d.dispelName
-                    local hasDispel = dispel and not issecretvalue(dispel)
-                    if hasDispel and dur and dur > 0 and dur <= 30 then
-                        found = d
-                        break
+            -- CC-Detection: alle harmful/helpful auras mit kurzer Dauer
+            -- werden als CC behandelt, plus Whitelist von bekannten
+            -- CC-Spell-IDs.
+            local ccList = {}
+            local seen = {}
+
+            -- Whitelist bekannter CC-Spells (cross-class).
+            -- Diese werden IMMER als CC behandelt, egal welche Dauer.
+            -- Quelle: spells.dbc / wowhead.com - aktuelle WoW 12.0 IDs.
+            local CC_SPELL_IDS = {
+                -- PRIEST
+                [8122]   = true,   -- Psychischer Schrei
+                [605]    = true,   -- Geistesbeherrschung
+                [9484]   = true,   -- Schattenkette (Shackle Undead)
+                [88625]  = true,   -- Schmerzwort
+                [453676] = true,   -- Psychischer Schrei (Talent-Variante)
+                -- MAGE
+                [118]    = true,   -- Polymorph (Schaf)
+                [28272]  = true,   -- Polymorph (Schwein)
+                [28271]  = true,   -- Polymorph (Schildkröte)
+                [61305]  = true,   -- Polymorph (Schwarze Katze)
+                [61721]  = true,   -- Polymorph (Kaninchen)
+                [61780]  = true,   -- Polymorph (Truthahn)
+                [126819] = true,   -- Polymorph (Stachelschwein)
+                [161353] = true,   -- Polymorph (Polarbärenjunges)
+                [161354] = true,   -- Polymorph (Affe)
+                [161355] = true,   -- Polymorph (Pinguin)
+                [161372] = true,   -- Polymorph (Pfau)
+                [277787] = true,   -- Polymorph (Direhorn-Junges)
+                [277792] = true,   -- Polymorph (Mottenschwarm)
+                [391622] = true,   -- Polymorph (Hirsch)
+                [122]    = true,   -- Frostnova
+                [33395]  = true,   -- Frostige Klauen (Wasserelementar Frostnova)
+                [82691]  = true,   -- Eisring
+                [31661]  = true,   -- Drachenodem
+                -- WARLOCK
+                [5782]   = true,   -- Furcht
+                [710]    = true,   -- Verbannen
+                [6789]   = true,   -- Tödliche Berührung
+                [6358]   = true,   -- Verführung (Sukkubus)
+                [30283]  = true,   -- Schattenfuror
+                [118699] = true,   -- Furcht (alt)
+                -- ROGUE
+                [2094]   = true,   -- Blenden
+                [6770]   = true,   -- Vermöbeln
+                [1776]   = true,   -- Auge graben
+                [408]    = true,   -- Nierenhieb
+                [1833]   = true,   -- Halsabschneider
+                [51722]  = true,   -- Verstümmeln
+                -- DRUID
+                [339]    = true,   -- Wurzeln greifen
+                [2637]   = true,   -- Winterschlaf
+                [33786]  = true,   -- Wirbelwind
+                [102359] = true,   -- Gewaltige Wurzeln
+                [99]     = true,   -- Demoralisierendes Brüllen (Stun)
+                [5211]   = true,   -- Gewaltiger Schlag
+                [22570]  = true,   -- Wütender Hieb
+                -- HUNTER
+                [3355]   = true,   -- Eisfalle
+                [19386]  = true,   -- Wyvernstich
+                [19503]  = true,   -- Ausschalten
+                [187650] = true,   -- Eisfalle
+                [117526] = true,   -- Bindender Schuss
+                [24394]  = true,   -- Einschüchterung
+                -- SHAMAN
+                [51514]  = true,   -- Hex (Frosch)
+                [211015] = true,   -- Hex (Gockel)
+                [211010] = true,   -- Hex (Schlange)
+                [210873] = true,   -- Hex (Krabbe)
+                [211004] = true,   -- Hex (Spinne)
+                [196942] = true,   -- Hex (Voodoo Totem)
+                [77505]  = true,   -- Erdstoß
+                [118905] = true,   -- Eingeengter Sturmschlag
+                -- WARRIOR
+                [5246]   = true,   -- Einschüchterndes Gebrüll
+                [132168] = true,   -- Schockwelle
+                [132169] = true,   -- Sturmangriff (Stun)
+                [46968]  = true,   -- Schockwelle (Talent)
+                [105771] = true,   -- Sturmangriff
+                [107570] = true,   -- Sturmangriff (Stun)
+                -- PALADIN
+                [853]    = true,   -- Hammer der Gerechtigkeit
+                [10326]  = true,   -- Vertreiben des Bösen
+                [105421] = true,   -- Blendendes Licht
+                [20066]  = true,   -- Buße (Repentance)
+                [31935]  = true,   -- Avenger's Shield (Stun)
+                -- DEATH KNIGHT
+                [47476]  = true,   -- Erwürgen
+                [108194] = true,   -- Asphyxieren
+                [221562] = true,   -- Asphyxieren (Blood)
+                [207171] = true,   -- Winters Biss
+                -- DEMON HUNTER
+                [217832] = true,   -- Imprison
+                [179057] = true,   -- Chaosnova
+                [205630] = true,   -- Illidans Griff
+                [211881] = true,   -- Wirbelwind
+                -- MONK
+                [115078] = true,   -- Lähmung (Paralysis)
+                [119381] = true,   -- Bein-Sweep
+                [123407] = true,   -- Wirbelnder Drachenstoß
+                [202274] = true,   -- Beschwörung Niuzao
+                -- EVOKER
+                [360806] = true,   -- Schlummer
+                [357210] = true,   -- Tiefatem (Stun)
+                [355689] = true,   -- Stollwurzel
+            }
+
+            -- DEBUG-Flag: nur für Entwicklung. Auf true setzen wenn neue
+            -- CC-Spells getestet werden müssen.
+            local _debugCC = false
+
+            local function checkAura(d, filterName)
+                if not canaccesstable(d) then return end
+
+                local id = SafeNum(d.spellId)
+                if id and seen[id] then return end
+
+                local dur = SafeNum(d.duration)
+                local dispel = d.dispelName
+                local hasDispel = dispel and not issecretvalue(dispel)
+                local src = d.sourceUnit
+                local srcSafe = (src and not issecretvalue(src))
+                local isMine = srcSafe and UnitIsUnit(src, "player")
+                local isWhitelisted = id and CC_SPELL_IDS[id]
+
+                if _debugCC then
+                    local nm = d.name
+                    if nm and not issecretvalue(nm) then
+                        print(string.format(
+                            "  %s: name=%s id=%s dur=%s dispel=%s mine=%s wl=%s",
+                            filterName, tostring(nm), tostring(id), tostring(dur),
+                            tostring(dispel), tostring(isMine),
+                            tostring(isWhitelisted)))
                     end
                 end
+
+                -- 1) Whitelist hat höchste Priorität - immer akzeptieren
+                if isWhitelisted then
+                    if id then seen[id] = true end
+                    table.insert(ccList, 1, d)  -- am Anfang einfügen
+                    return
+                end
+
+                -- 2) Sonst: kurze Dauer als CC behandeln
+                if not dur or dur <= 0 then return end
+                if dur > 15 then return end
+
+                if id then seen[id] = true end
+                table.insert(ccList, d)
             end
-            if found then
-                FillSlotWithAura(slot, found)
+
+            for idx = 1, 40 do
+                if #ccList >= MAX_ICONS_PER_SLOT then break end
+                local d = C_UnitAuras.GetAuraDataByIndex(unit, idx, "HARMFUL")
+                if not d then break end
+                checkAura(d, "HARMFUL")
+            end
+
+            for idx = 1, 40 do
+                if #ccList >= MAX_ICONS_PER_SLOT then break end
+                local d = C_UnitAuras.GetAuraDataByIndex(unit, idx, "HELPFUL")
+                if not d then break end
+                checkAura(d, "HELPFUL")
+            end
+
+            if #ccList > 0 then
+                FillSlotWithAuraList(slot, ccList, p)
             else
                 slot:Hide()
             end
@@ -1092,42 +1711,27 @@ local function BuildNameplate(baseFrame, unit)
         elseif kind == "raidmarker" then
             local mark = GetRaidTargetIndex and GetRaidTargetIndex(unit)
             if mark and RAIDMARKER_ICONS[mark] then
-                slot.tex:SetTexture(RAIDMARKER_ICONS[mark])
-                slot.tex:SetTexCoord(0, 1, 0, 1)  -- Marker haben keinen Border-Crop
-                slot:SetBackdropBorderColor(0, 0, 0, 0)  -- kein Border bei Marker
-                slot.count:Hide()
-                slot.cd:Hide()
-                slot:Show()
+                FillSlotTexture(slot, RAIDMARKER_ICONS[mark], nil)
+                -- Marker brauchen keinen Border-Crop
+                slot.icons[1].tex:SetTexCoord(0, 1, 0, 1)
             else
                 slot:Hide()
-                -- TexCoord zurücksetzen für nächste Aura-Verwendung
-                slot.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
             end
 
         elseif kind == "elite" then
             local classification = UnitClassification(unit)
             if classification == "elite" or classification == "rareelite" then
-                -- Elite-Krone (gold)
-                slot.tex:SetTexture("Interface\\Icons\\Achievement_PVP_A_06")
-                slot.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-                slot:SetBackdropBorderColor(1.0, 0.85, 0.2, 1)
-                slot.count:Hide()
-                slot.cd:Hide()
-                slot:Show()
+                FillSlotTexture(slot,
+                    "Interface\\Icons\\Achievement_PVP_A_06",
+                    {1.0, 0.85, 0.2})
             elseif classification == "rare" then
-                slot.tex:SetTexture("Interface\\Icons\\Achievement_PVP_H_06")
-                slot.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-                slot:SetBackdropBorderColor(0.7, 0.85, 1.0, 1)
-                slot.count:Hide()
-                slot.cd:Hide()
-                slot:Show()
+                FillSlotTexture(slot,
+                    "Interface\\Icons\\Achievement_PVP_H_06",
+                    {0.7, 0.85, 1.0})
             elseif classification == "worldboss" or classification == "boss" then
-                slot.tex:SetTexture("Interface\\Icons\\Achievement_Boss_LichKing")
-                slot.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-                slot:SetBackdropBorderColor(1.0, 0.3, 0.3, 1)
-                slot.count:Hide()
-                slot.cd:Hide()
-                slot:Show()
+                FillSlotTexture(slot,
+                    "Interface\\Icons\\Achievement_Boss_LichKing",
+                    {1.0, 0.3, 0.3})
             else
                 slot:Hide()
             end
@@ -1140,11 +1744,15 @@ local function BuildNameplate(baseFrame, unit)
     function f:UpdateAuras()
         local p = NP:GetActiveProfile()
         if not p.showAuras or not self.auraSlotFrames then
-            -- Master-toggle aus oder Slots noch nicht erstellt
             if self.auraSlotFrames then
                 for _, slot in pairs(self.auraSlotFrames) do slot:Hide() end
             end
             return
+        end
+
+        -- Slot-Größen + Anker live aus Profile aktualisieren
+        if self.RefreshSlotLayout then
+            self:RefreshSlotLayout()
         end
 
         local slots = p.auraSlots or {}
@@ -1202,10 +1810,78 @@ local function BuildNameplate(baseFrame, unit)
         self.castSpellName = name
         self.castSpellID   = spellID
         self.castIsChannel = isChannel and true or false
-        self.castText:SetText(name or "")
+
+        -- Cast-Name mit Größe + Farbe + Offset aus Profile
+        do
+            local sz = SafeNum(p.castNameSize) or 10
+            local col = p.castNameColor or {1, 1, 1}
+            local ox = SafeNum(p.castNameOffsetX) or 0
+            local oy = SafeNum(p.castNameOffsetY) or 0
+            self.castText:SetFont(GetFont(p), P(sz), "OUTLINE")
+            self.castText:SetTextColor(col[1], col[2], col[3], 1)
+            self.castText:ClearAllPoints()
+            self.castText:SetPoint("LEFT", self.castBar, "LEFT",
+                P(3 + ox), P(oy))
+            self.castText:SetText(name or "")
+        end
+
+        -- Cast-Timer (rechts) - aktivieren wenn enabled
+        if p.showCastTimer ~= false and self.castTimer then
+            local sz = SafeNum(p.castTimerSize) or 10
+            local col = p.castTimerColor or {1, 1, 1}
+            local ox = SafeNum(p.castTimerOffsetX) or 0
+            local oy = SafeNum(p.castTimerOffsetY) or 0
+            self.castTimer:SetFont(GetFont(p), P(sz), "OUTLINE")
+            self.castTimer:SetTextColor(col[1], col[2], col[3], 1)
+            self.castTimer:ClearAllPoints()
+            self.castTimer:SetPoint("RIGHT", self.castBar, "RIGHT",
+                P(-3 + ox), P(oy))
+            self.castTimer:Show()
+        elseif self.castTimer then
+            self.castTimer:Hide()
+        end
+
+        -- Cast-Target (über Castbar): zeigen wen der Mob targetiert
+        if self.castTarget then
+            local targetUnit = unit .. "target"
+            if UnitExists(targetUnit) then
+                local tName = UnitName(targetUnit)
+                if tName and not issecretvalue(tName) then
+                    local sz = SafeNum(p.castTargetSize) or 10
+                    self.castTarget:SetFont(GetFont(p), P(sz), "OUTLINE")
+                    -- Klassenfarbe wenn aktiviert
+                    if p.castTargetClassColor and UnitIsPlayer(targetUnit) then
+                        local _, cls = UnitClass(targetUnit)
+                        if cls and CLASS_COLORS[cls] then
+                            local cc = CLASS_COLORS[cls]
+                            self.castTarget:SetTextColor(cc[1], cc[2], cc[3], 1)
+                        end
+                    else
+                        local col = p.castTargetColor or {1, 1, 1}
+                        self.castTarget:SetTextColor(col[1], col[2], col[3], 1)
+                    end
+                    self.castTarget:SetText("→ "..tName)
+                    self.castTarget:Show()
+                else
+                    self.castTarget:Hide()
+                end
+            else
+                self.castTarget:Hide()
+            end
+        end
+
+        -- Cast-Icon-Skalierung
+        if p.showCastIcon and self.castIcon then
+            local cbh = P(p.castbarHeight or 10)
+            local scl = SafeNum(p.castIconScale) or 1.0
+            self.castIcon:SetSize(cbh * scl, cbh * scl)
+            self.castIcon:SetTexture(tex)
+            self.castIcon:Show()
+        elseif self.castIcon then
+            self.castIcon:Hide()
+        end
 
         if castDuration then
-            -- Bar via SetTimerDuration animieren - secret-safe
             local direction = isChannel
                 and Enum.StatusBarTimerDirection.RemainingTime
                 or Enum.StatusBarTimerDirection.ElapsedTime
@@ -1215,28 +1891,37 @@ local function BuildNameplate(baseFrame, unit)
             end)
         end
 
-        if p.showCastIcon then
-            self.castIcon:SetTexture(tex)
-            self.castIcon:Show()
-        else
-            self.castIcon:Hide()
-        end
-
         if p.showCastSpark then
             self.castSpark:Show()
         else
             self.castSpark:Hide()
         end
 
+        -- Castbar-Farbe
         local c
         if notInterruptible then     c = p.colorCastUninter
         elseif isChannel    then     c = p.colorCastChannel
         else                          c = p.colorCastNormal end
         self.castBar:SetStatusBarColor(c[1], c[2], c[3])
         self.interruptBar:SetColorTexture(c[1], c[2], c[3], 1)
+
+        -- Important-Cast-Glow: zeigt Glow um Castbar bei wichtigen Casts
+        -- Heuristik: nicht-unterbrechbare Casts sind oft "wichtig" (Bosse,
+        -- Cooldowns). Erweiterbar via Spell-ID-Whitelist.
+        if self.castGlow then
+            if p.importantCastGlow and notInterruptible then
+                local gc = p.colors and p.colors.importantCastGlow
+                       or p.importantCastGlowColor
+                       or {1.0, 0.20, 0.20, 1.0}
+                self.castGlow:SetVertexColor(gc[1], gc[2], gc[3], gc[4] or 1)
+                self.castGlow:Show()
+            else
+                self.castGlow:Hide()
+            end
+        end
+
         self.castContainer:Show()
 
-        -- Mods nochmal triggern (falls Spell-Trigger)
         ApplyMods(self, unit, p)
     end
 
@@ -1245,6 +1930,9 @@ local function BuildNameplate(baseFrame, unit)
         self.casting = false
         self.castSpellName = nil
         self.castSpellID = nil
+        if self.castTimer then self.castTimer:SetText("") end
+        if self.castTarget then self.castTarget:Hide() end
+        if self.castGlow then self.castGlow:Hide() end
         if interrupted then
             local c = p.colorCastInterrupt
             self.castBar:SetStatusBarColor(c[1], c[2], c[3])
@@ -1306,14 +1994,9 @@ local function BuildNameplate(baseFrame, unit)
         threatGlow:SetPoint("TOPLEFT",     hpContainer, "TOPLEFT",     -P(2), P(2))
         threatGlow:SetPoint("BOTTOMRIGHT", hpContainer, "BOTTOMRIGHT",  P(2), -P(2))
 
-        -- Aura-Icons rebuilden falls Anzahl/Größe geändert
-        for _, ic in ipairs(auraFrame.icons) do ic:Hide() end
-        while #auraFrame.icons < p.auraCount do
-            table.insert(auraFrame.icons,
-                CreateAuraIcon(#auraFrame.icons + 1))
-        end
-        for _, ic in ipairs(auraFrame.icons) do
-            ic:SetSize(P(p.auraIconSize), P(p.auraIconSize))
+        -- Slot-Layout neu anwenden (Sizes + Anchor aus Profile)
+        if f.RefreshSlotLayout then
+            f:RefreshSlotLayout()
         end
 
         f:UpdateAll()
@@ -1581,6 +2264,26 @@ function NP:OnInitialize()
 
     self.db = VuloUI_NameplatesDB
 
+    -- ============================================================
+    --  ONE-SHOT MIGRATOR (v1.1)
+    --  Frühere Versionen hatten einen Nameplates-Tab im zentralen
+    --  ConfigUI, der in VuloUIDB.profile.nameplates schrieb. Diese
+    --  Werte wurden vom Modul nie gelesen. Falls Bestandsuser dort
+    --  Settings haben, einmalig ins aktive Profil übernehmen.
+    -- ============================================================
+    if VuloUIDB and VuloUIDB.profile and VuloUIDB.profile.nameplates
+       and not VuloUI_NameplatesDB._migratedFromCentralDB then
+        local active = VuloUI_NameplatesDB.profiles[
+            VuloUI_NameplatesDB.activeProfile or "Default"]
+        if active then
+            for k, v in pairs(VuloUIDB.profile.nameplates) do
+                if active[k] == nil then active[k] = v end
+            end
+        end
+        VuloUIDB.profile.nameplates = nil
+        VuloUI_NameplatesDB._migratedFromCentralDB = true
+    end
+
     V:RegisterEvent("PLAYER_LOGIN", function()
         SetNameplateCVars()
     end)
@@ -1600,34 +2303,6 @@ end
 
 function NP:OnDisable()
     for _, plate in pairs(self.plates) do plate:Hide() end
-end
-
--- ============================================================
---  SLASH COMMAND
--- ============================================================
-
-SLASH_VULONAMEPLATES1 = "/vnp"
-SLASH_VULONAMEPLATES2 = "/vuloplates"
-SlashCmdList["VULONAMEPLATES"] = function(msg)
-    msg = (msg or ""):lower():gsub("^%s+",""):gsub("%s+$","")
-    if msg == "reapply" or msg == "reload" then
-        NP:Reapply()
-        print("|cff9370DBVuloUI Nameplates:|r reapplied.")
-    elseif msg == "options" or msg == "config" or msg == "" then
-        if VuloUI_NP_Options and VuloUI_NP_Options.Toggle then
-            VuloUI_NP_Options:Toggle()
-        else
-            print("|cffFF6060Options-Modul nicht geladen|r")
-        end
-    elseif msg:match("^profile%s+(.+)") then
-        local name = msg:match("^profile%s+(.+)")
-        NP:SetActiveProfile(name)
-        print("|cff9370DBVuloUI Nameplates:|r Profil → "..name)
-    else
-        print("|cff9370DB/vnp|r          – Options öffnen")
-        print("|cff9370DB/vnp reapply|r  – Settings neu anwenden")
-        print("|cff9370DB/vnp profile X|r – Profil wechseln")
-    end
 end
 
 -- ============================================================

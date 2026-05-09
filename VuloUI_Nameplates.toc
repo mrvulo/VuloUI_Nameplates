@@ -9,4 +9,3 @@
 ## Category: |cff7381ffVuloUI|r
 
 Nameplates.lua
-Nameplates_Options.lua
